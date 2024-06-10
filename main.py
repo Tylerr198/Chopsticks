@@ -1,15 +1,4 @@
-# Coding one of my favorite childhood games to be played in terminal -> Chopsticks
-
-
-# losing condition
-# getting both hands out aka. both hands at 5
-# not being able to attack or move
-# not having any fingers up
-
-# rules of the game
-# when transferring, have to have a different combination of hands. so if 2-1, cant do 1-2. it's the same thing
-
-#challenges I ran into
+# challenges I ran into
 # creating the classes
 # knowing what methods to add in classes instead of being regular functions
 # writing redundnat code. Play choices 
@@ -44,7 +33,7 @@ class Player():
     # method for transferring points between hands
     def transfer(self, direction: str, amount: int) -> bool:
         if direction == "l":
-            if self.game_hand.left < amount:
+            if self.game_hand.right < amount:
                 return False
             self.game_hand.left += int(amount)
             self.game_hand.right -= int(amount)
@@ -67,7 +56,6 @@ def hit(attacker: Player, opp: Player) -> bool:
     attack_hand_side = input("Hand to attack with (l/r): ")
     opp_hand_side = input("Hand to attack (l/r): ")
 
-    # left or right hand now
     attack_hand = attacker.game_hand.left if attack_hand_side == "l" else attacker.game_hand.right
     opp_hand = opp.game_hand.left if opp_hand_side == "l" else opp.game_hand.right
     if attack_hand + opp_hand > 5:
@@ -113,8 +101,6 @@ def check_winner(player1: Player, player2: Player):
         return True
     return False
     
-    
-
 def start_game():
     # initialize game
     player1 = Player("player 1")
@@ -135,7 +121,6 @@ def start_game():
         is_winner = check_winner(player1, player2)
         turn_count += 1
         if is_winner:
-            print("Winner!")
             return
 
             
