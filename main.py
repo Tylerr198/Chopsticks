@@ -1,8 +1,3 @@
-# challenges I ran into
-# creating the classes
-# knowing what methods to add in classes instead of being regular functions
-# writing redundnat code. Play choices 
-
 class Hand():
     def __init__(self):
         self.left = 1
@@ -53,17 +48,19 @@ class Player():
 
 # function for "attacking" opponent hand
 def hit(attacker: Player, opp: Player) -> bool:
-    attack_hand_side = input("Hand to attack with (l/r): ")
-    opp_hand_side = input("Hand to attack (l/r): ")
+    attack_hand_side = direction_input()
+    opp_hand_side = direction_input()
 
     attack_hand = attacker.game_hand.left if attack_hand_side == "l" else attacker.game_hand.right
     opp_hand = opp.game_hand.left if opp_hand_side == "l" else opp.game_hand.right
     if attack_hand + opp_hand > 5:
         print("You can't hit that hand")
         return False
-    elif attack_hand == "dead":
+    elif attack_hand == 0:
         print("That hand is dead. You can't attack with it")
         return False
+    elif opp_hand == 0:
+        print("That hand is dead. You can't attack it")
     else:
         opp.update_hand(opp_hand_side, attack_hand)
         print("Successful attack")
@@ -72,20 +69,19 @@ def hit(attacker: Player, opp: Player) -> bool:
 def show_board(player1, player2):
     print("Player 1: " + player1.show_hand() + "\n-----------------------------" + "\nPlayer 2: " + player2.show_hand())
 
-def get_choices():
-    amount = int(input("Amount: "))
-    direction = input("Left or right(l/r): ")
-    return [direction, amount]
+def transfer_choice():
+    return [direction_input(), amount_input()]
 
 def player_choices(player1, player2):
     print(f"\n{player1}'s Choice")
-    move_choice = input("hit or transfer (h/t): ")
+    move_choice = hit_trasnfer_input()
+    
     if move_choice == "t":
-        choices = get_choices()
+        choices = transfer_choice()
         transfer_success = player1.transfer(choices[0], choices[1])
         while not transfer_success:
-            print("\nInvalid input. Please choose again\n")
-            choices = get_choices()
+            print("\nInvalid move. Please choose again\n")
+            choices = transfer_choice()
             transfer_success = player1.transfer(choices[0], choices[1])
     if move_choice == "h":
         hit_success = hit(player1, player2)
@@ -122,8 +118,38 @@ def start_game():
         turn_count += 1
         if is_winner:
             return
+        
 
-            
+# Helper functions to validate inputs
+def direction_input():
+    while True:
+        direction = input("Left or right(l/r): ")
+        if direction != "l" and direction != "r":
+            print("Choose l or r")
+        else:
+            break
+    return direction
+
+def hit_trasnfer_input():
+    while True:
+        move_choice = input("hit or transfer (h/t): ")
+        if move_choice != "h" and move_choice != "t":
+            print("Please choose h or t")
+        else:
+            break
+    return move_choice
+
+def amount_input():
+    while True:
+        amount = input("Amount: ")
+        try:
+            amount = int(amount)
+            break
+        except ValueError:
+            print("Invalid input. Please enter a number")
+    return amount
+
+
 
 if __name__ == "__main__":
     start_game()
