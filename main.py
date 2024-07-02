@@ -28,69 +28,67 @@ class Player():
     def show_hand(self) -> str:
         return repr(self.game_hand)
     
-    # Method for transferring points between hands
-    def transfer(self) -> None:
-        while True:
-            print("Hand to transfer points to")
-            direction = direction_input()
-            amount = amount_input()
-            if direction == "l": # Transfer to left hand
-                temp = self.game_hand.left + amount
-                if self.game_hand.right == temp:
-                    print("\nInvalid move. Please choose again. Will result in same combo")
-                    continue
-                temp = self.game_hand.right
-                if self.game_hand.right < amount or amount <= 0:
-                    print("\nInvalid move. Please choose again\n")
-                    continue
-                self.game_hand.left += amount
-                self.game_hand.right -= amount
-                break
-            elif direction == "r": # Transfer to right hand
-                temp = self.game_hand.right + amount
-                if self.game_hand.left == temp:
-                    print("\nInvalid move. Please choose again. Will result in same combo")
-                    continue
-                if self.game_hand.left < amount or amount <= 0:
-                    print("\nInvalid move. Please choose again\n")
-                    continue
-                self.game_hand.right += amount
-                self.game_hand.left -= amount
-                break
-            print("\nSuccessful transfer")
-            break
-
     def update_hand(self, side: str, amount:int) -> None:
         if side == "l":
             self.game_hand.left += amount
         else:
             self.game_hand.right += amount
     
+# Function for transferring points between hands
+def transfer(player1: Player) -> None:
+    print("Hand to transfer points to")
+    direction = direction_input()
+    amount = amount_input()
+    if direction == "l": # Transfer to left hand
+        temp = player1.game_hand.left + amount
+        if player1.game_hand.right == temp:
+            print("\nInvalid move. Please choose again. Will result in same combo")
+            return False
+        temp = player1.game_hand.right
+        if player1.game_hand.right < amount or amount <= 0:
+            print("\nInvalid move. Please choose again\n")
+            return False
+        player1.game_hand.left += amount
+        player1.game_hand.right -= amount
+    elif direction == "r": # Transfer to right hand
+        temp = player1.game_hand.right + amount
+        if player1.game_hand.left == temp:
+            print("\nInvalid move. Please choose again. Will result in same combo")
+            return False
+        if player1.game_hand.left < amount or amount <= 0:
+            print("\nInvalid move. Please choose again\n")
+            return False
+        player1.game_hand.right += amount
+        player1.game_hand.left -= amount
+    print("\nSuccessful transfer")
+    return True
+
+    
 
 # Function for "attacking" opponent hand
 def hit(attacker: Player, opp: Player) -> bool:
-    while True:
-        # Get hand direction for attacking and attacked
-        print("\nYour hand to attack with")
-        attack_hand_str = direction_input()
-        attack_hand_pt = attacker.game_hand.left if attack_hand_str == "l" else attacker.game_hand.right
-        if attack_hand_pt == 0: # Case: Attacking with dead hand
-            print("\nThat hand is dead. You can't attack with it")
-            continue
+    # Get hand direction for attacking and attacked
+    print("\nYour hand to attack with")
+    attack_hand_str = direction_input()
+    attack_hand_pt = attacker.game_hand.left if attack_hand_str == "l" else attacker.game_hand.right
+    if attack_hand_pt == 0: # Case: Attacking with dead hand
+        print("\nThat hand is dead. You can't attack with it")
+        return False
 
-        print("\nOpponent hand to attack")
-        opp_hand_str = direction_input()
-        opp_hand_pt = opp.game_hand.left if opp_hand_str == "l" else opp.game_hand.right
-        if opp_hand_pt == 0: # Case: Attacking a dead hand
-            print("\nThat hand is dead. You can't attack it")
-            continue
- 
-        if attack_hand_pt + opp_hand_pt > 5: # Case: Attacking a hand brings it over 5 points
-            print("\nYou can't hit that hand. It would go over 5 points")
-        else:
-            opp.update_hand(opp_hand_str, attack_hand_pt)
-            print("\nSuccessful attack")
-            break
+    print("\nOpponent hand to attack")
+    opp_hand_str = direction_input()
+    opp_hand_pt = opp.game_hand.left if opp_hand_str == "l" else opp.game_hand.right
+    if opp_hand_pt == 0: # Case: Attacking a dead hand
+        print("\nThat hand is dead. You can't attack it")
+        return False
+
+    if attack_hand_pt + opp_hand_pt > 5: # Case: Attacking a hand brings it over 5 points
+        print("\nYou can't hit that hand. It would go over 5 points")
+        return False
+    else:
+        opp.update_hand(opp_hand_str, attack_hand_pt)
+        print("\nSuccessful attack")
+        return True
 
 def show_board(player1: Player, player2: Player) -> None:
     print(f"{player1}: " + player1.show_hand() + "\n-----------------------------" + f"\n{player2}: " + player2.show_hand())
@@ -98,10 +96,16 @@ def show_board(player1: Player, player2: Player) -> None:
 def player_choices(player1: Player, player2: Player) -> None:
     print(f"\n{player1}'s Move")
     move_choice = hit_trasnfer_input()
-    if move_choice == "t":
-        player1.transfer()
-    if move_choice == "h":
-        hit(player1, player2)
+    success = False
+    while not success:
+        if move_choice == "t":
+            if player1.game_hand.left + player1.game_hand.right == 1:
+                print("\nYou can't transfer points. You only have 1 point")
+                move_choice = hit_trasnfer_input()
+                continue
+            success = transfer(player1)
+        elif move_choice == "h":
+            success =hit(player1, player2)
 
 
 # Check state of game to determine if there is a winner
