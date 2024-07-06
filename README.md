@@ -17,7 +17,8 @@ This is a terminal version of one of my favorite games growing up
 - Hits: You cannot hit an opponent's hand over 5 points. In order to get their hand out, the attack must make their hand exactly 5 points.
 - Transfers: You cannot do transfers if the resulting combination of points on the hands is identical to the original combination but just swapped. Ex. (left: 4 ponts: right: 3 points) -> (left: 3 points | right: 4 points). This is invalid.
 
-
+# In the works
+- Create bot to play through Reinforcement Learning with OpenAi's Gym 
 
 
     
